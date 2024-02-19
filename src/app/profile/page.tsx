@@ -16,7 +16,6 @@ export default function ProfilePage() {
       const err = error as AxiosError<{
         error: string;
       }>;
-      console.log(err.response?.data.error as string);
       toast.error(err.response?.data.error as string);
     }
   };
@@ -29,7 +28,6 @@ export default function ProfilePage() {
       const err = error as AxiosError<{
         error: string;
       }>;
-      console.log(err.response?.data.error as string);
       toast.error(err.response?.data.error as string);
     }
   };
