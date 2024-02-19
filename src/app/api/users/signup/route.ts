@@ -2,6 +2,7 @@ import { connect } from "@/db/config";
 import User from "@/models/usermodel";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "@/lib/mailer";
 
 connect();
 
@@ -15,8 +16,8 @@ export async function POST(req: NextRequest) {
 
     if (user) {
       return NextResponse.json(
-        { error: "User already exists" },
-        { status: 400 }
+        { error: "Account Already Exists" },
+        { status: 409 }
       );
     }
 
@@ -24,13 +25,17 @@ export async function POST(req: NextRequest) {
     const hashedPW = await bcrypt.hash(password, salt);
 
     const newUser = new User({ username, email, password: hashedPW });
+
     const savedUser = await newUser.save();
     console.log(savedUser);
 
-    return NextResponse.json(
-      { message: "User created successfully", success: true, savedUser },
-      { status: 200 }
-    );
+    await sendEmail({ email, emailType: "VERIFY", userId: savedUser._id });
+
+    return NextResponse.json({
+      message: "Account created successfully",
+      success: true,
+      savedUser,
+    });
   } catch (err) {
     const error = err as Error;
     return NextResponse.json({ error: error.message }, { status: 500 });
