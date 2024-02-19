@@ -3,7 +3,7 @@ import { connect } from "@/db/config";
 import User from "@/models/usermodel";
 import jwt from "jsonwebtoken";
 import bcryipt from "bcryptjs";
-import { getErrorMessage } from "@/lib/utils";
+import { Token } from "@/types";
 
 connect();
 
@@ -23,14 +23,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    const token_data = {
+    const token_data: Token = {
       id: user._id,
       username: user.username,
       email: user.email,
     };
 
     const acc_token = await jwt.sign(token_data, process.env.SECRET_TOKEN!, {
-      expiresIn: "1h",
+      expiresIn: "10m",
     });
 
     const res = NextResponse.json(
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     res.cookies.set("token", acc_token, {
       httpOnly: true,
       path: "/",
+      expires: new Date(Date.now() + 10 * 60 * 1000),
     });
 
     return res;
