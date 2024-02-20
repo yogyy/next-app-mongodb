@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/db/config";
 import User from "@/models/usermodel";
-import jwt from "jsonwebtoken";
-import bcryipt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { Token } from "@/types";
+import { encrypt } from "@/lib/utils";
 
 connect();
 
@@ -11,14 +11,13 @@ export async function POST(req: NextRequest) {
   try {
     const reqBody = await req.json();
     const { email, password } = reqBody;
-    console.log(reqBody);
 
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    console.log("user exist");
-    const validPW = await bcryipt.compare(password, user.password);
+
+    const validPW = await bcrypt.compare(password, user.password);
     if (!validPW) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
@@ -29,15 +28,13 @@ export async function POST(req: NextRequest) {
       email: user.email,
     };
 
-    const acc_token = await jwt.sign(token_data, process.env.SECRET_TOKEN!, {
-      expiresIn: "10m",
-    });
+    const session = await encrypt(token_data);
 
     const res = NextResponse.json(
       { message: "Login successfully" },
       { status: 200 }
     );
-    res.cookies.set("token", acc_token, {
+    res.cookies.set("session", session, {
       httpOnly: true,
       path: "/",
       expires: new Date(Date.now() + 10 * 60 * 1000),
