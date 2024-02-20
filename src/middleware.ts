@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { updateSession } from "./lib/utils";
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isPublicPath =
     path === "/login" || path === "/signup" || path === "/verify";
 
-  const token = req.cookies.get("token")?.value || "";
-
+  const token = req.cookies.get("session")?.value;
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
@@ -15,6 +15,7 @@ export function middleware(req: NextRequest) {
   if (!isPublicPath && !token) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
+  return await updateSession(req);
 }
 
 export const config = {
