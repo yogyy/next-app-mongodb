@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,7 +47,9 @@ export default function LoginPage() {
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white text-center">
+            <h1
+              onClick={() => toast.success("hello world")}
+              className="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white text-center">
               {loading ? "Processing" : "Login"}
             </h1>
             <div className="space-y-4 md:space-y-6">
@@ -86,15 +89,21 @@ export default function LoginPage() {
               </div>
               <button
                 onClick={onLogin}
-                className="w-full text-white bg-blue-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800">
-                {buttonDisabled ? "No Login" : "Login"}
+                disabled={buttonDisabled}
+                className={cn(
+                  "w-full text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800 transition-colors duration-300",
+                  buttonDisabled
+                    ? "bg-blue-500/50 cursor-not-allowed"
+                    : "bg-blue-500"
+                )}>
+                Login
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400 space-x-1">
                 <span>Don&apos;t have an account?</span>
                 <Link
                   href="/signup"
                   className="font-medium hover:underline text-gray-400">
-                  Signup
+                  Sign up
                 </Link>
               </p>
             </div>

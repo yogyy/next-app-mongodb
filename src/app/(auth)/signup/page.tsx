@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function SignupPage() {
         "/api/users/signup",
         user
       );
-      toast.success(response.data.message);
+      toast.success(response.data.message, { duration: 4000 });
       // console.log("Signup success", response.data);
       router.push("/login");
     } catch (error) {
@@ -55,7 +56,7 @@ export default function SignupPage() {
         <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white text-center">
-              {loading ? "Processing" : "Signup"}
+              {loading ? "Processing" : "Sign up"}
             </h1>
             <div className="space-y-4 md:space-y-6">
               <div>
@@ -72,7 +73,7 @@ export default function SignupPage() {
                     setUser({ ...user, username: e.target.value })
                   }
                   placeholder="Enter your username"
-                  className=" border  xt-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                  className=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
@@ -85,7 +86,7 @@ export default function SignupPage() {
                   type="email"
                   name="email"
                   id="email"
-                  className=" border  xt-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                  className=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                   placeholder="name@gmail.com"
                   value={user.email}
                   onChange={(e) => setUser({ ...user, email: e.target.value })}
@@ -111,8 +112,14 @@ export default function SignupPage() {
               </div>
               <button
                 onClick={onSignup}
-                className="w-full text-white bg-blue-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800">
-                {buttonDisabled ? "No Signup" : "Signup"}
+                disabled={buttonDisabled}
+                className={cn(
+                  "w-full text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800 transition-colors duration-300",
+                  buttonDisabled
+                    ? "bg-blue-500/50 cursor-not-allowed"
+                    : "bg-blue-500"
+                )}>
+                Signup
               </button>
               <p className="text-sm font-light text-gray-500 space-x-1 dark:text-gray-400">
                 <span>Already have an account?</span>
