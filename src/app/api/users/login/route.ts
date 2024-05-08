@@ -3,7 +3,7 @@ import { connect } from "@/db/config";
 import User from "@/models/usermodel";
 import bcrypt from "bcryptjs";
 import { Token, UserResponse } from "@/types";
-import { encrypt } from "@/lib/utils";
+import { encrypt } from "@/lib/auth";
 
 connect();
 

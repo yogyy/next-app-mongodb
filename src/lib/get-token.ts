@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { decrypt } from "./utils";
+import { decrypt } from "./auth";
 
 export const getDataFromToken = async (req: NextRequest) => {
   try {
