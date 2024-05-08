@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/db/config";
 import User from "@/models/usermodel";
 import bcrypt from "bcryptjs";
-import { Token } from "@/types";
+import { Token, UserResponse } from "@/types";
 import { encrypt } from "@/lib/utils";
 
 connect();
@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
     const reqBody = await req.json();
     const { email, password } = reqBody;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne<UserResponse>({ email });
+    console.log(user);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -20,6 +21,10 @@ export async function POST(req: NextRequest) {
     const validPW = await bcrypt.compare(password, user.password);
     if (!validPW) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+    }
+
+    if (!user.isVerified) {
+      return NextResponse.json({ error: "Email Not Verifed" }, { status: 401 });
     }
 
     const token_data: Token = {
